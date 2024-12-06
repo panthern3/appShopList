@@ -1,0 +1,27 @@
+workflows:
+  ios:
+    name: Build iOS for KMM
+    environment:
+      xcode: latest
+      vars:
+        GRADLE_PROJECT_PATH: "iosApp"
+    scripts:
+      - name: Install dependencies
+        script: |
+          # Установка CocoaPods
+          brew install cocoapods || echo "Cocoapods already installed"
+          pod install --project-directory=iosApp
+      - name: Build iOS App
+        script: |
+          # Сборка приложения для iOS
+          xcodebuild -workspace iosApp/iosApp.xcworkspace \
+            -scheme iosApp \
+            -sdk iphoneos \
+            -configuration Release \
+            -archivePath build/iosApp.xcarchive archive
+          # Выводим информацию о пути и артефактах
+          echo "Build completed successfully"
+          ls -l build/*.ipa # Показываем артефакты
+
+artifacts:
+  - build/*.ipa
