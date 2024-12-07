@@ -8,6 +8,7 @@ workflows:
     scripts:
       - name: Install dependencies
         script: |
+          cd iosApp 
           flutter pub get
           gem install cocoapods -v 1.16.1 # Установка конкретной версии CocoaPods
           pod install
@@ -15,4 +16,4 @@ workflows:
         script: |
           flutter build ios --release --no-codesign
     artifacts:
-      - build/ios/ipa/*.ipa
+      - iosApp/*.ipa
