@@ -5,11 +5,11 @@ workflows:
     environment:
       flutter: stable
       xcode: latest
-      cocoapods: latest
     scripts:
       - name: Install dependencies
         script: |
           flutter pub get
+          gem install cocoapods -v 1.16.1 # Установка конкретной версии CocoaPods
           pod install
       - name: Build iOS App (No Code Signing)
         script: |
