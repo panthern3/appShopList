@@ -15,5 +15,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "My_Application"
-include(":androidApp")
+//include(":androidApp")
 include(":shared")
