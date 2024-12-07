@@ -38,12 +38,10 @@ android {
 
 dependencies {
     implementation(projects.shared)
-    implementation(libs.compose.ui)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3)
     implementation(libs.androidx.activity.compose)
     implementation(libs.ktorClientCore)
     implementation(libs.ktorCLientCIO)
-    implementation(libs.ktorClientAndroid)
     debugImplementation(libs.compose.ui.tooling)
 }

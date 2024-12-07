@@ -33,14 +33,18 @@ kotlin {
             implementation(libs.ktorClientJson)
             implementation(libs.ktorClientSerialization)
             implementation(libs.kotlinxSerializationJson)
-            implementation(libs.ktorClientIos)
             implementation(libs.retrofit)
             implementation(libs.gson)
-
-
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+        }
+        iosMain.dependencies {
+            implementation(libs.ktorClientIos)
+        }
+        androidMain.dependencies {
+            implementation(libs.ktorClientAndroid)
+            implementation(libs.compose.ui)
         }
     }
 }
