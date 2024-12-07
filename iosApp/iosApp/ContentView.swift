@@ -2,124 +2,126 @@ import SwiftUI
 import shared
 
 struct ContentView: View {
-    @ObservedObject var viewModel = ShoppingListViewModel()
+    @StateObject private var viewModel = ShoppingListViewModel() // iOS ViewModel
 
+    @State private var listName: String = ""
     @State private var itemNameToAdd: String = ""
     @State private var quantityToAdd: String = ""
-    @State private var listName: String = ""
     @State private var listIdToRemove: String = ""
+    @State private var listIdToLoad: String = ""
 
     var body: some View {
-        VStack {
-            Text("Shopping List App")
-                .font(.title)
+        NavigationView {
+            ScrollView {
+                VStack(spacing: 16) {
+                    Text("Shopping List App")
+                        .font(.headline)
 
-            // Ошибка
-            if let errorMessage = viewModel.errorMessage {
-                Text(errorMessage)
-                    .foregroundColor(.red)
-            }
+                    if let errorMessage = viewModel.errorMessage {
+                        Text(errorMessage)
+                            .foregroundColor(.red)
+                    }
 
-            // Кнопка для создания ключа
-            Button("Create Test Key") {
-                viewModel.createTestKey()
-            }
+                    // 1. Create Test Key
+                    Button("Create Test Key") {
+                        viewModel.createTestKey()
+                    }
 
-            // Ввод ключа
-            TextField("Enter Test Key", text: $viewModel.testKey ?? "")
-                .padding()
-                .textFieldStyle(RoundedBorderTextFieldStyle())
+                    if let testKey = viewModel.testKey {
+                        Text("Test Key: \(testKey)")
+                    }
 
-            Button("Authenticate") {
-                if let key = viewModel.testKey, !key.isEmpty {
-                    viewModel.authenticate(key)
-                }
-            }
+                    // 2. Authenticate
+                    TextField("Enter Test Key", text: $viewModel.testKeyInput)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
 
-            // Ввод имени списка
-            TextField("Enter Shopping List Name", text: $listName)
-                .padding()
-                .textFieldStyle(RoundedBorderTextFieldStyle())
+                    Button("Authenticate") {
+                        viewModel.authenticate()
+                    }
 
-            Button("Create Shopping List") {
-                if !listName.isEmpty {
-                    viewModel.createShoppingList(listName)
-                }
-            }
+                    // 3. Create Shopping List
+                    TextField("Enter Shopping List Name", text: $listName)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
 
-            if let newListId = viewModel.newListId {
-                Text("Shopping List ID: \(newListId)")
-            }
+                    Button("Create Shopping List") {
+                        viewModel.createShoppingList(name: listName)
+                    }
 
-            // Удалить список
-            TextField("Shopping List ID to Remove", text: $listIdToRemove)
-                .padding()
-                .keyboardType(.numberPad)
+                    if let newListId = viewModel.newListId {
+                        Text("Shopping List ID: \(newListId)")
+                    }
 
-            Button("Remove/Restore Shopping List") {
-                if let listId = Int(listIdToRemove) {
-                    viewModel.removeShoppingList(listId)
-                }
-            }
+                    // 4. Remove/Restore Shopping List
+                    TextField("Shopping List ID to Remove/Restore", text: $listIdToRemove)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
 
-            // Добавить товар
-            TextField("Item Name", text: $itemNameToAdd)
-                .padding()
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-
-            TextField("Quantity", text: $quantityToAdd)
-                .padding()
-                .keyboardType(.numberPad)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-
-            Button("Add To Shopping List") {
-                if let quantity = Int(quantityToAdd), !itemNameToAdd.isEmpty {
-                    viewModel.addToShoppingList(itemNameToAdd, quantity)
-                }
-            }
-
-            // Список покупок
-            if let currentItems = viewModel.currentItems {
-                List(currentItems) { item in
-                    HStack {
-                        Text("\(item.name) - \(item.quantity)")
-                        Spacer()
-                        Button("Cross Off") {
-                            viewModel.crossItOff(item.id)
+                    Button("Remove/Restore Shopping List") {
+                        if let listId = Int(listIdToRemove) {
+                            viewModel.removeShoppingList(listId: listId)
                         }
-                        Button("Remove Item") {
-                            viewModel.removeFromList(item.id)
+                    }
+
+                    if let operationStatus = viewModel.operationStatus {
+                        Text(operationStatus)
+                            .foregroundColor(operationStatus.contains("successfully") ? .green : .red)
+                    }
+
+                    // 5. Add to Shopping List
+                    TextField("List ID", text: $viewModel.newListIdInput)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+
+                    TextField("Item Name", text: $itemNameToAdd)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+
+                    TextField("Quantity", text: $quantityToAdd)
+                        .keyboardType(.numberPad)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+
+                    Button("Add To Shopping List") {
+                        if let quantity = Int(quantityToAdd) {
+                            viewModel.addToShoppingList(itemName: itemNameToAdd, quantity: quantity)
+                        }
+                    }
+
+                    // 6. Get Shopping List
+                    TextField("Shopping List ID to Load", text: $listIdToLoad)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+
+                    Button("Get Shopping List") {
+                        if let listId = Int(listIdToLoad) {
+                            viewModel.getShoppingList(listId: listId)
+                        }
+                    }
+
+                    // Display Shopping Lists
+                    ForEach(viewModel.allShoppingLists, id: \.id) { list in
+                        ShoppingListRow(shopList: list) {
+                            viewModel.getShoppingList(listId: list.id)
                         }
                     }
                 }
+                .padding()
             }
-
-            // Кнопка для получения всех списков
-            Button("Load Shopping Lists") {
-                if let key = viewModel.testKey, !key.isEmpty {
-                    viewModel.getAllMyShopLists(key)
-                }
-            }
-
-            // Показ списков покупок
-            if let allShoppingLists = viewModel.allShoppingLists {
-                List(allShoppingLists) { list in
-                    VStack(alignment: .leading) {
-                        Text("List ID: \(list.id)")
-                        Text("Name: \(list.name)")
-                        Button("Get Items") {
-                            viewModel.getShoppingList(list.id)
-                        }
-                    }
-                }
-            }
+            .navigationBarTitle("Shopping List")
         }
-        .padding()
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
+struct ShoppingListRow: View {
+    let shopList: ShopListModel
+    let onGetItems: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("List ID: \(shopList.id)")
+            Text("Name: \(shopList.name)")
+            Button("Get Items") {
+                onGetItems()
+            }
+            .padding(.vertical, 4)
+        }
+        .padding()
+        .background(Color.gray.opacity(0.1))
+        .cornerRadius(8)
     }
 }

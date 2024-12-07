@@ -1,34 +1,18 @@
 workflows:
   ios:
-    name: Build iOS for KMM
+    name: ios-build-no-signing
+    max_build_duration: 120
     environment:
+      flutter: stable
       xcode: latest
-      vars:
-        GRADLE_PROJECT_PATH: "iosApp"
+      cocoapods: stable
     scripts:
       - name: Install dependencies
         script: |
-          # Установка CocoaPods
-          brew install cocoapods || echo "Cocoapods already installed"
-          pod install --project-directory=iosApp
+          flutter pub get
+          pod install
       - name: Build iOS App (No Code Signing)
         script: |
-          # Сборка приложения для iOS без подписи
-          xcodebuild -workspace iosApp/iosApp.xcworkspace \
-            -scheme iosApp \
-            -sdk iphoneos \
-            -configuration Release \
-            CODE_SIGNING_ALLOWED=NO \
-            -archivePath build/iosApp.xcarchive archive
-          # Создаем IPA без подписи
-          xcodebuild -exportArchive \
-            -archivePath build/iosApp.xcarchive \
-            -exportPath build \
-            CODE_SIGNING_ALLOWED=NO \
-            -exportOptionsPlist iosApp/exportOptions.plist
-          # Выводим информацию о пути и артефактах
-          echo "Build completed successfully"
-          ls -l build/*.ipa # Показываем артефакты
-
-artifacts:
-  - build/*.ipa
+          flutter build ios --release --no-codesign
+    artifacts:
+      - build/ios/ipa/*.ipa
