@@ -12,6 +12,6 @@ workflows:
       - name: Build iOS App (No Code Signing)
         script: |
           cd iosApp  # Переход в директорию с iOS проектом
-          xcodebuild -project iosApp.xcodeproj -configuration Debug -destination "platform=iOS Simulator,name=iPhone 14" clean build CODE_SIGNING_REQUIRED=NO
+          xcodebuild -project iosApp.xcodeproj -scheme YourScheme -configuration Debug -destination "platform=iOS Simulator,name=iPhone 14" clean build CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" PROVISIONING_PROFILE_SPECIFIER=""
     artifacts:
       - iosApp/build/ios/ipa/*.ipa  # Путь к артефактам .ipa, измените путь в соответствии с результатами сборки
