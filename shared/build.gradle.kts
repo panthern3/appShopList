@@ -45,6 +45,9 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.ktorClientAndroid)
             implementation(libs.compose.ui)
+            implementation(libs.compose.ui.tooling.preview)
+            implementation(libs.compose.material3)
+            implementation(libs.androidx.activity.compose)
         }
     }
 }
