@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+//import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -6,15 +6,15 @@ plugins {
 }
 
 kotlin {
-    androidTarget {
-        compilations.all {
-            compileTaskProvider.configure {
-                compilerOptions {
-                    jvmTarget.set(JvmTarget.JVM_1_8)
-                }
-            }
-        }
-    }
+//    androidTarget {
+//        compilations.all {
+//            compileTaskProvider.configure {
+//                compilerOptions {
+//                    jvmTarget.set(JvmTarget.JVM_1_8)
+//                }
+//            }
+//        }
+//    }
     
     listOf(
         iosX64(),
@@ -52,14 +52,14 @@ kotlin {
     }
 }
 
-android {
-    namespace = "com.yourapp.shoppinglist"
-    compileSdk = 34
-    defaultConfig {
-        minSdk = 21
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-}
+//android {
+//    namespace = "com.yourapp.shoppinglist"
+//    compileSdk = 34
+//    defaultConfig {
+//        minSdk = 21
+//    }
+//    compileOptions {
+//        sourceCompatibility = JavaVersion.VERSION_1_8
+//        targetCompatibility = JavaVersion.VERSION_1_8
+//    }
+//}
