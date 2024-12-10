@@ -1,3 +1,8 @@
+
+plugins {
+    alias(libs.plugins.kotlinMultiplatform)
+}
+
 kotlin {
     iosX64() // Для x86_64 архитектуры
 
