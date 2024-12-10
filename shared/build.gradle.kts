@@ -1,14 +1,10 @@
 kotlin {
+    iosX64() // Для x86_64 архитектуры
 
-    iosX64()  // Для x86_64 архитектуры
-
-    listOf(
-        iosX64(),
-    ).forEach {
-        it.binaries.framework {
-            baseName = "shared"
-            isStatic = true
-        }
+    // Настройка бинарных фреймворков для iOS
+    iosX64().binaries.framework {
+        baseName = "shared"
+        isStatic = true
     }
 
     sourceSets {
